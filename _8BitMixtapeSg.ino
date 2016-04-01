@@ -313,9 +313,9 @@ ISR(ADC_vect)
     firstTime = 0;
   else if (ADMUX  == adc1) {
     pot1 = val;
-    ADMUX = adc2;
+    ADMUX = adc3;
   }
-  else if ( ADMUX == adc2) {
+  else if ( ADMUX == adc3) {
     pot2  = val;
     ADMUX = adc1;
   }

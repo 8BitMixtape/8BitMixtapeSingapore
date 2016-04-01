@@ -114,9 +114,9 @@ void timer_init()
 
 void button_init()
 {
-  //button is pb1 and pb3
-  DDRB &= ~(1 << PB1 | 1 << PB3); //set to input
-  PORTB |= (1 << PB1 | 1 << PB3); //pin btn
+  //button is pb4 and pb0
+  DDRB &= ~(1 << PB4 | 1 << PB0); //set to input
+  PORTB |= (1 << PB4 | 1 << PB0); //pin btn
 }
 
 
@@ -222,8 +222,8 @@ int main(void)
 ISR(TIMER1_COMPA_vect)
 {
 
-  uint8_t btn1_now = button_is_pressed(PINB, PB1);
-  uint8_t btn2_now = button_is_pressed(PINB, PB3);
+  uint8_t btn1_now = button_is_pressed(PINB, PB4);
+  uint8_t btn2_now = button_is_pressed(PINB, PB0);
 
   uint8_t button1_state = 0;
   uint8_t button2_state = 0;

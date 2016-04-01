@@ -81,38 +81,34 @@ void adc_start()
 
 void timer_init()
 {
-  //PWM SOUND OUTPUT
-  TCCR0A |= (1 << WGM00) | (1 << WGM01); //Fast pwm
-  //TCCR0A |= (1<<WGM00) ; //Phase correct pwm
-  TCCR0A |= (1 << COM0A1); //Clear OC0A/OC0B on Compare Match when up-counting.
-  TCCR0B |= (1 << CS00); //no prescale
+         
+//no prescale, enable 16 Mhz
+   
+   clock_prescale_set(clock_div_1);
 
-  //TIMER1 SOUND GENERATOR @ 44100hz
-  //babygnusb attiny85 clock frequency = 16.5 Mhz
 
-  //TIMER SETUP
-  TCCR1 |= _BV(CTC1); //clear timer on compare
-  TIMSK |= _BV(OCIE1A); //activate compare interruppt
-  TCNT1 = 0; //init count
+//pwm timer
 
-  //TIMER FREQUENCY
-  //TCCR1 |= _BV(CS10); // prescale 1
-  //TCCR1 |= _BV(CS11); // prescale 2
-  TCCR1 |= _BV(CS10) | _BV(CS12); // prescale 16
-  //TCCR1 |= _BV(CS11)|_BV(CS12); // prescale 32
-  //TCCR1 |= _BV(CS10)|_BV(CS11)|_BV(CS12); // prescale 64
-  //TCCR1 |= _BV(CS13); // prescale 128
-  //TCCR1 |= _BV(CS10) | _BV(CS13); // prescale 256
+    TCCR0A = 3<<WGM00;                      // Fast PWM
+    TCCR0B = 1<<WGM02 | 2<<CS00;            // 1/8 prescale
+    TIMSK = 1<<OCIE0A;                      // Enable compare match
+    OCR0A = 61;
 
-  //SAMPLE RATE
-  OCR1C = 120; // (16500000/16)/8000 = 128
-  //OCR1C = 45; // (16500000/16)/11025 = 93
-  //OCR1C = 22; // (16500000/16)/22050 = 46
-  //OCR1C = 23; // (16500000/16)/44100 = 23
 
-  // babygnusb led pin
-  DDRB |= (1 << PB0); //pin connected to led
+//pwm timer 
 
+    PLLCSR |= (1 << PLLE) | (1 << PCKE);    // Enable PLL and async PCK for high-speed PWM
+    TCCR1 |= _BV(CTC1);
+    TCCR1 |= _BV(CS10);
+    TCCR1 |= _BV(PWM1A);
+    TCCR1 |= 3<<COM1A0;
+
+//speaker out PB1
+
+    DDRB |= 1<<DDB1; //set PB1 as output
+    PORTB &= ~(1 << PB1); //set PB1 output 0
+    
+    
 }
 
 
@@ -291,7 +287,7 @@ ISR(TIMER1_COMPA_vect)
   //end button 2 action
 
   //sound generator pwm out
-  OCR0A = snd;
+  OCR1A = snd;
   t++;
 
   //button logic
